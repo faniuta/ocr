@@ -1,0 +1,7 @@
+.vscode
+.vscode
+.venv
+.venv_py_3_10
+output
+.devcontainer
+__pycache__

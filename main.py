@@ -11,7 +11,8 @@ from dotenv import load_dotenv
 import urllib.parse
 from pdf2image import convert_from_bytes
 import re
-
+from pydantic import BaseModel
+import uuid
 load_dotenv()
 
 app = FastAPI(title="Persian OCR API")
@@ -262,6 +263,60 @@ def process_pdf_text(pdf_content):
     except Exception as e:
         print(f"Error in process_pdf: {str(e)}")
         raise Exception(f"Error processing PDF: {str(e)}")
+
+
+
+
+# ورودی مشترک
+class TTSInput(BaseModel):
+    text: str
+
+# --- روش 1: ESPnet
+try:
+    from espnet2.bin.tts_inference import Text2Speech
+    import torch
+    import soundfile as sf
+
+    espnet_tts = Text2Speech.from_pretrained("m3hrdadfi/persian-tts")
+except Exception as e:
+    print("Error while loadخخخخing TTS model:", str(e))
+    espnet_tts = None
+
+@app.post("/tts/espnet")
+def tts_espnet(input: TTSInput):
+    if espnet_tts is None:
+        raise HTTPException(status_code=500, detail="ESPnet TTS model not loaded.")
+    try:
+        wav = espnet_tts(input.text)["wav"]
+        filename = f"{uuid.uuid4()}.wav"
+        path = os.path.join("outputs", filename)
+        os.makedirs("outputs", exist_ok=True)
+        sf.write(path, wav.numpy(), 22050)
+        return {"file_path": path}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# --- روش 2: Coqui TTS
+try:
+    from TTS.api import TTS as CoquiTTS
+    coqui_tts = CoquiTTS(model_name="tts_models/fa/mai/tacotron2-DDC", progress_bar=False, gpu=False)
+except:
+    coqui_tts = None
+
+@app.post("/tts/coqui")
+def tts_coqui(input: TTSInput):
+    if coqui_tts is None:
+        raise HTTPException(status_code=500, detail="Coqui TTS model not loaded.")
+    try:
+        filename = f"{uuid.uuid4()}.wav"
+        path = os.path.join("outputs", filename)
+        os.makedirs("outputs", exist_ok=True)
+        coqui_tts.tts_to_file(text=input.text, file_path=path)
+        return {"file_path": path}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn

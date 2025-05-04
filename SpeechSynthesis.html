@@ -1,0 +1,9 @@
+<button onclick="speakText()">Say Something</button>
+
+<script>
+function speakText() {
+  const utterance = new SpeechSynthesisUtterance("سلام! چطوری؟ من یه متن هستم که دارم به گفتار تبدیل می‌شم.");
+  utterance.lang = "fa-IR"; // فارسی
+  speechSynthesis.speak(utterance);
+}
+</script>
