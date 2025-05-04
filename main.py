@@ -279,7 +279,7 @@ try:
 
     espnet_tts = Text2Speech.from_pretrained("m3hrdadfi/persian-tts")
 except Exception as e:
-    print("Error while loadخخخخing TTS model:", str(e))
+    print("Error while loadiiining TTS model:", str(e))
     espnet_tts = None
 
 @app.post("/tts/espnet")
