@@ -300,7 +300,10 @@ def tts_espnet(input: TTSInput):
 # --- روش 2: Coqui TTS
 try:
     from TTS.api import TTS as CoquiTTS
-    coqui_tts = CoquiTTS(model_name="tts_models/fa/mai/tacotron2-DDC", progress_bar=False, gpu=False)
+    # coqui_tts = CoquiTTS(model_name="tts_models/fa/mai/tacotron2-DDC", progress_bar=False, gpu=False)
+    coqui_tts = CoquiTTS(model_name="tts_models/fa/custom/glow-tts", progress_bar=False, gpu=False)
+
+
 except:
     coqui_tts = None
 

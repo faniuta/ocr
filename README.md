@@ -62,6 +62,10 @@ curl -X POST "http://localhost:8000/ocr" \
 - برای PDF‌های متنی، از استخراج مستقیم متن استفاده می‌شود
 - برای PDF‌های تصویری، هر صفحه به صورت جداگانه پردازش می‌شود 
 
-source .
+source .venv_py_3_10/bin/activate
 
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+sudo apt install espeak
+
+tts --model_name "tts_models/fa/custom/glow-tts" --text "این یک تست است" --out_path output.wav
